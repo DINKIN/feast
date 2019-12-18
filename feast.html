@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -47,10 +47,17 @@
           <div class="stat-line" id="stat-breasts">Fractal Prospectus: 99/100</div>
           <button class="stat-button" id="stat-button-status">Status</button>
           <button class="stat-button" id="log-button">Log: Enabled</button>
+          
         </div>
       </div>
       <div id="log">
-        
+      </div>
+      <div class="options">
+        <div id="options">
+          <button class="option-button" id="save-button">Save Game</button>
+          <button class="option-button" id="load-button">Load Game</button>
+          <button class="option-button" id="inventory-button">Inventory</button>
+        </div>
       </div>
       <div class="stats">
         <div id="foe-stats">
@@ -148,7 +155,10 @@
     </p>
     <form id="character-form">
       <ul class="character-form-list" id="character-step-1">
-        <li>
+          <li>
+              <button type="button" id="character-load">Load Character</button>
+          </li>
+          <li>
           <label for="character-name">Name</label>
           <input type="text" id="character-name" name="name" placeholder="Player"/>
         </li>

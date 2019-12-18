@@ -365,6 +365,7 @@ function next_step(stage) {
 
 window.addEventListener('load', function(event) {
   document.getElementById("character-step-1-next").addEventListener("click", function() { next_step(2); });
+  document.getElementById("character-load").addEventListener("click", startLoaded, false);
   document.getElementById("start-button").addEventListener("click", start, false);
 });
 
@@ -375,6 +376,8 @@ function start() {
   document.getElementById("game").style.display = "block";
   document.getElementById("stat-button-status").addEventListener("click", status, false);
   document.getElementById("log-button").addEventListener("click", toggleLog, false);
+  document.getElementById("load-button").addEventListener("click", loadGameButton, false);
+  document.getElementById("save-button").addEventListener("click", saveGameButton, false);
   loadCompass();
   loadDialog();
   world = createWorld();
@@ -519,6 +522,7 @@ function changeMode(newMode) {
   mode = newMode;
   let body = document.querySelector("body");
   document.getElementById("foe-stats").style.display = "none";
+  document.getElementById("options").style.display = "block";
   body.className = "";
   switch(mode) {
     case "explore":
@@ -528,9 +532,11 @@ function changeMode(newMode) {
     case "combat":
       body.classList.add("combat");
       document.getElementById("foe-stats").style.display = "block";
+      document.getElementById("options").style.display = "none";
       break;
     case "eaten":
       body.classList.add("eaten");
+        document.getElementById("options").style.display = "none";
       document.getElementById("foe-stats").style.display = "block";
       break;
   }
@@ -930,6 +936,8 @@ function saveGame() {
   let stringified = JSON.stringify(save);
 
   window.localStorage.setItem("save", stringified);
+  update(["Game saved."]);
+  updateDisplay();
 }
 
 function loadGame() {
@@ -952,7 +960,57 @@ function loadGame() {
 
   clearScreen();
   moveToByName(save.position, "");
+  update(["Game loaded."]);
+  updateDisplay();
 }
+
+function startLoaded() { //used to load the game via the main menu
+  start();
+  loadGame();
+}
+
+//these work in conjunction with buttonConfirm/buttonConfirmEnd and any functions that call them.
+var confirmTimer; //this is areference to the active setTimeout, only used to allow clearTimeout to know thich timeout to clear
+let confirmState = "";  //this records which function is asking for confirmation "" means nothing is asking for confirmation.
+let confirmStateText = ""; //this is where the original button text is stored when the button reads "Confirm?"
+
+function buttonConfirm(targetedButton, buttonText){ //starts a timer and requests the playter click the button again to confirm that they want to take the action
+  if(confirmState != ""){
+  buttonConfirmEnd();
+  }
+  document.getElementById([targetedButton]).innerHTML = "Confirm?"; //changes button text to "Confirm?"
+  confirmState = targetedButton;  //copies data to global variable to make sure only one button is requesting confirmation at any given time
+  confirmStateText = buttonText;  //copies data to global variable to make sure only one button is requesting confirmation at any given time
+  confirmTimer = setTimeout(buttonConfirmEnd, 5000); //5000 is 5 seconds
+}
+
+function buttonConfirmEnd(){ //this resets the button once the request for confirmation has no longer active
+  document.getElementById([confirmState]).innerHTML = [confirmStateText]; //resets text
+  confirmState = ""; //resets confirmation state
+  clearTimeout(confirmTimer); //keeps function from being called again if a timer is running
+}
+
+function saveGameButton(){//activates if the "Save Game" button is pressed
+  let targetedButton = "save-button";
+  if (confirmState === targetedButton){//if the confirm timer is active for this function, actually saves game
+    buttonConfirmEnd();
+    saveGame();
+  }else{
+    buttonConfirm(targetedButton, "Save Game"); //starts confirm timer for this function
+  }
+}
+
+function loadGameButton(){//activates if the "Load Game" button is pressed
+  let targetedButton = "load-button";
+  if (confirmState === targetedButton){//if the confirm timer is active for this function, actually loads game
+    buttonConfirmEnd();
+    loadGame();
+  }else{ //starts confirm timer for this function
+    buttonConfirm(targetedButton, "Load Game");
+  }
+}
+
+
 
 // wow polyfills
 

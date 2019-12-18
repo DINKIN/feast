@@ -105,16 +105,12 @@ function Bed() {
     "name": "Save Game",
     "action": function() {
       saveGame();
-      update(["Game saved."]);
-      updateDisplay();
     }
   });
   this.actions.push({
     "name": "Load Game",
     "action": function() {
       loadGame();
-      update(["Game loaded."]);
-      updateDisplay();
     }
   });
   this.actions.push({

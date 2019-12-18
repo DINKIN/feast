@@ -65,6 +65,12 @@ button {
   font-size: 18px;
   user-select: none;
 }
+.option-button {
+  width: 100px;
+  height: 50px;
+  font-size: 18px;
+  user-select: none;
+}
 
 #compass {
   padding: 10px;
@@ -147,6 +153,12 @@ button {
 .stats {
   float: right;
   flex: 1;
+}
+
+.options {
+  flex-wrap: wrap;
+  max-width: 100px;
+  height:50%;
 }
 
 #player-stats {
