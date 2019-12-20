@@ -36,6 +36,8 @@ function MountainWyrm() {
 
   this.attacks.push(wyrmPounce(this));
 
+  this.attacks.push(wyrmWrestle(this));
+  this.attacks.push(wyrmPounceBite(this));
   this.attacks.push(wyrmGrind(this));
   this.attacks.push(wyrmOralVore(this));
   this.attacks.push(wyrmCockVore(this));
@@ -72,6 +74,8 @@ function MountainWyrm() {
   this.finishCombat = function() {
     if (this.flags.state == "combat")
       return [this.description("The") + " knocks you to the ground. You bash your head on a rock and black out."];
+    else if (this.flags.state == "grapple")
+      return ["You black out, unable to maintain consciousness..."];
     else if (this.flags.state == "stomach")
       return [
         "You give one last heave - one last bid to escape - and fail utterly, falling limp in the wyvern's powerful stomach. He lets our a triumphant roar before settling in, letting out your last breath as part of a sharp, crass <i>BELCH</i>. He growls and moans lowly, rocking to and fro as your body falls apart like slow-cooked meat.",
@@ -187,10 +191,47 @@ function wyrmPounce(attacker) {
   };
 }
 
+function wyrmWrestle(attacker) {
+  return {
+    attackPlayer: function(defender){
+      let damage = attack(attacker, defender, attacker.str / 3);
+      attacker.changeStamina(-15);
+      defender.changeStamina(-35);
+      return ["The wyrm grabs you and thrashes you about, trying to tire you out."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "grapple";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.staminaPercentage(); }
+  };
+}
+
+function wyrmPounceBite(attacker) {
+  return {
+    attackPlayer: function(defender){
+      let damage = attack(attacker, defender, attacker.str / 3);
+      attacker.changeStamina(-15);
+      defender.changeStamina(-25);
+      return ["The wyrm snaps at you, biting your shoulder."];
+    },
+    requirements: [
+      function(attacker, defender) {
+        return attacker.flags.state == "grapple";
+      }
+    ],
+    priority: 1,
+    weight: function(attacker, defender) { return defender.staminaPercentage() * defender.prefs.vore.oral; }
+  };
+}
+
 function wyrmGrind(attacker) {
   return {
     attackPlayer: function(defender){
       let damage = attack(attacker, defender, attacker.str / 3);
+      attacker.changeStamina(-15);
       defender.changeStamina(-35);
       return ["You squirm as the wyrm grinds his throbbing red shaft along your body, painting your chest and face with hot, musky fluids."];
     },
@@ -200,7 +241,7 @@ function wyrmGrind(attacker) {
       }
     ],
     priority: 1,
-    weight: function(attacker, defender) { return defender.staminaPercentage(); }
+    weight: function(attacker, defender) { return defender.staminaPercentage() * defender.prefs.vore.cock; }
   };
 }
 
