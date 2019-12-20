@@ -35,18 +35,6 @@ function ForestExplore() {
   });
 }
 
-
-function AnacondaTest() {
-  GameObject.call(this, "Anaconda Test");
-
-  this.actions.push({
-    "name": "Anaconda Test",
-    "action": function() {
-      startCombat(new Anaconda());
-    }
-  });
-}
-
 function Wolf() {
   Creature.call(this, "Wolf", 10, 15, 15);
 
